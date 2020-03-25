@@ -1,0 +1,63 @@
+﻿@page "/"
+
+<h1>Tarefas</h1>
+
+<p>This component demonstrates fetching data from a service.</p>
+
+
+<div class="input-group mb-3 col-md-4">
+    <input class="form-control" placeholder="Nova da tarefa" @bind="newTodo" />
+    <div class="input-group-append">
+        <button class="btn btn-primary" @onclick='AddNewTask'>Add</button>
+    </div>
+</div>
+
+
+@if (todos == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    @foreach (var item in todos)
+    {
+        <div class="col-md-4">
+            <ul class="list-group">
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                <input type="checkbox" @bind="item.IsComplete" />
+                    @item.Title
+                    <button class="badge badge-pill" @onclick="@(() => { RemoveTask(item); })"><i class="oi oi-trash bg-danger"></i></button>
+                </li>
+            </ul>
+        </div>
+    }
+}
+
+@code {
+    public class TodoItem
+    {
+        public TodoItem()
+        {
+            Id = Guid.NewGuid();
+        }
+        public Guid Id { get; set; }
+        public string Title { get; set; }
+        public bool IsComplete { get; set; }
+    }
+
+    private string newTodo = "";
+    private List<TodoItem> todos = new List<TodoItem>();
+
+    void AddNewTask()
+    {
+        if (!string.IsNullOrWhiteSpace(newTodo))
+        {
+            todos.Add(new TodoItem { Title = newTodo });
+            newTodo = "";
+        }
+    }
+    void RemoveTask(TodoItem todoItem)
+    {
+        todos.RemoveAt(todos.ToList<TodoItem>().FindIndex(e => e.Id == todoItem.Id));
+    }
+}
